@@ -1,4 +1,5 @@
 import assert from 'assert'
+import fs from 'fs'
 import { Direction, FieldContent, getField, getFieldP, State } from '../game/model'
 import { Ai } from '../game/execution'
 
@@ -164,4 +165,14 @@ export function createAstAi(ast: AstNode): AstAi {
     },
     ast,
   }
+}
+
+export function serializeToFile(filename: string, node: AstNode): void {
+  const string = JSON.stringify(node, null, 2)
+  fs.writeFileSync(filename, string, 'utf8')
+}
+
+export function deserializeFromFile(filename: string): AstNode {
+  const string = fs.readFileSync(filename, 'utf8')
+  return JSON.parse(string) as AstNode
 }

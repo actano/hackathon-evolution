@@ -13,8 +13,8 @@ import {
 } from './ast'
 import { assertNever } from '../util'
 
-const GET_RANDOM_THRESHOLD = 0.2
-const SET_RANDOM_THRESHOLD = 0.25
+const GET_RANDOM_THRESHOLD = 0.6
+const SET_RANDOM_THRESHOLD = 0.8
 
 const MIN_LITERAL_NUMBER = -999
 const MAX_LITERAL_NUMBER = 999

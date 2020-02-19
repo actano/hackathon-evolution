@@ -69,6 +69,7 @@ type Quality = number
 type EvaluationFunction = (result: RunResult) => Quality
 
 const roundEvaluation: EvaluationFunction = (result: RunResult) => result.round
+const scoreRoundEvalution: EvaluationFunction = (result: RunResult) => result.round * 100 + result.endState.score
 
 export {
   Ai,
@@ -78,4 +79,5 @@ export {
   run,
   makeDirectionAi,
   roundEvaluation,
+  scoreRoundEvalution,
 }

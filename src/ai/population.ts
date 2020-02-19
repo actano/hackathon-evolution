@@ -73,7 +73,6 @@ export function simulatePopulation(
   mutationRate: number,
 ): EvaluatedPopulation {
   const initialPopulation: Population = range(0, populationSize).map(() => createRandomAstAi(rand))
-  // const initialPopulation: Population = range(0, populationSize).map(() => createAstAi(astGetX()))
 
   let currentPopulation = evaluatePopulation(
     initialPopulation,

@@ -7,6 +7,7 @@ enum FieldContent {
   Wall = 'Wall',
   SnakeTail = 'SnakeTail',
   SnakeHead = 'SnakeHead',
+  Food = 'Food',
 }
 
 interface Point {
@@ -16,6 +17,7 @@ interface Point {
 
 interface State {
   board: FieldContent[][],
+  score: number,
   snake: Point[],
   sizeX: number,
   sizeY: number,
@@ -28,6 +30,7 @@ function createState(sizeX: number, sizeY: number, snakeLength: number): State {
   const state: State = {
     sizeX,
     sizeY,
+    score: 0,
     gameOver: false,
     snake: range(0, snakeLength).map(dY => ({ x: snakeHead.x, y: snakeHead.y - dY })),
     board: range(0, sizeY).map(y =>
@@ -44,6 +47,20 @@ function createState(sizeX: number, sizeY: number, snakeLength: number): State {
   return state
 }
 
+function createState2(sizeX: number, sizeY: number, snakeLength: number): State {
+  const empty = createState(sizeX, sizeY, snakeLength)
+
+  empty.board[Math.floor(sizeY/2)][1] = FieldContent.Wall
+  empty.board[Math.floor(sizeY/2)][sizeX-2] = FieldContent.Wall
+  empty.board[1][Math.floor(sizeX/2)] = FieldContent.Wall
+  empty.board[sizeY-2][Math.floor(sizeX/2)] = FieldContent.Wall
+
+  empty.board[Math.floor(sizeY/3)][1] = FieldContent.Food
+  empty.board[Math.floor(sizeY/3)][Math.floor(sizeX / 3)] = FieldContent.Food
+
+  return empty
+}
+
 function fieldToString(content: FieldContent): string {
   switch (content) {
     case FieldContent.Nothing:
@@ -54,6 +71,8 @@ function fieldToString(content: FieldContent): string {
       return '[-]'
     case FieldContent.SnakeHead:
       return '[+]'
+    case FieldContent.Food:
+      return '[*]'
     default:
       throw new Error(`No symbol for field content ${content}`)
   }
@@ -155,7 +174,7 @@ function move(state: State, direction: Direction): State {
 
   const contentNewHead = getFieldP(state, newSnakeHead)
 
-  if (contentNewHead != FieldContent.Nothing) {
+  if ((contentNewHead === FieldContent.Wall) || (contentNewHead === FieldContent.SnakeTail) || (contentNewHead === FieldContent.SnakeHead)) {
     return {
       ...state,
       gameOver: true,
@@ -164,6 +183,7 @@ function move(state: State, direction: Direction): State {
 
   return {
      ...state,
+     score: (contentNewHead === FieldContent.Food) ? state.score + 1 : state.score,
      snake: [newSnakeHead, ...take(state.snake.length-1, state.snake)]
   }
 }
@@ -175,6 +195,7 @@ export {
   stateToString,
   fieldToString,
   createState,
+  createState2,
   getField,
   getFieldP,
   isGameOver,

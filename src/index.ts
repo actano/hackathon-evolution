@@ -1,20 +1,20 @@
-import { createState, stateToString } from './game/model'
+import { createState, createState2, stateToString } from './game/model'
 import {
   createTournamentParentSelection,
   fittestSelection, MAX_ROUNDS,
   simulatePopulation,
 } from './ai/population'
-import { roundEvaluation, runPrint } from './game/execution'
+import { roundEvaluation, runPrint, scoreRoundEvalution } from './game/execution'
 import { createEvolver } from './ai/evolve'
 
-const initialState = createState(10, 10, 5)
+const initialState = createState2(10, 10, 5)
 
 const result = simulatePopulation(
   Math.random,
   initialState,
-  10,
-  1000,
-  roundEvaluation,
+  100,
+  100,
+  scoreRoundEvalution,
   createTournamentParentSelection(4),
   createEvolver(Math.random),
   0.15,

@@ -96,6 +96,12 @@ export interface AstGetX {
   type: NodeType.GetX,
 }
 
+export function astGetX(): AstGetX {
+  return {
+    type: NodeType.GetX,
+  }
+}
+
 export interface AstGetY {
   type: NodeType.GetY,
 }

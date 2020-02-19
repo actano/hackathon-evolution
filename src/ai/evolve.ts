@@ -14,7 +14,7 @@ import {
 import { assertNever } from '../util'
 
 const GET_RANDOM_THRESHOLD = 0.2
-const SET_RANDOM_THRESHOLD = 0.1
+const SET_RANDOM_THRESHOLD = 0.25
 
 const MIN_LITERAL_NUMBER = -999
 const MAX_LITERAL_NUMBER = 999
@@ -137,7 +137,7 @@ function randomIntegerBetween(rand: RandomNumberGenerator, min: number, max: num
   return Math.floor(randomNumberBetween(rand, min, max))
 }
 
-function getRandomElement<T>(rand: RandomNumberGenerator, list: T[]): T {
+export function getRandomElement<T>(rand: RandomNumberGenerator, list: T[]): T {
   const index = randomIntegerBetween(rand, 0, list.length)
   return list[index]
 }

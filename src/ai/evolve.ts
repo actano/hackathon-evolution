@@ -6,9 +6,10 @@ import {
   AstIf,
   AstNode,
   AstNumberLiteral,
-  BinaryOperation,
+  BinaryOperation, createAstAi,
   NodeType
 } from './ast'
+import { assertNever } from '../util'
 
 const GET_RANDOM_THRESHOLD = 0.2
 const SET_RANDOM_THRESHOLD = 0.1
@@ -16,11 +17,7 @@ const SET_RANDOM_THRESHOLD = 0.1
 const MIN_LITERAL_NUMBER = -999
 const MAX_LITERAL_NUMBER = 999
 
-const RANDOM_AST_DEPTH_THRESHOLD = 3
-
-function assertNever(x: never) {
-  assert(false, 'should not be called')
-}
+const RANDOM_AST_DEPTH_THRESHOLD = 1
 
 function getRandomSubtree(rand: RandomNumberGenerator, ast: AstNode): AstNode {
   const shouldReturn = rand() < GET_RANDOM_THRESHOLD
@@ -222,5 +219,10 @@ export function createEvolver(rand: RandomNumberGenerator): Evolver {
       return mutate(rand, ai)
     },
   }
+}
+
+export function createRandomAstAi(rand: RandomNumberGenerator): AstAi {
+  const ast = generateRandomAst(rand, 0)
+  return createAstAi(ast)
 }
 

@@ -2,6 +2,7 @@ import assert from 'assert'
 import fs from 'fs'
 import { Direction, FieldContent, getField, getFieldP, State } from '../game/model'
 import { Ai } from '../game/execution'
+import { assertNever } from '../util'
 
 export const FALSE = 0
 export const TRUE = 1
@@ -17,7 +18,13 @@ export enum NodeType {
 export enum BinaryOperation {
   Plus = '+',
   Multiply = '*',
-  Equals = '=='
+  Equals = '==',
+  Less = '<',
+  LessEq = '<=',
+  Greater = '>',
+  GreaterEq = '>=',
+  And = '&&',
+  Or = '||',
 }
 
 export interface AstNumberLiteral {
@@ -94,7 +101,7 @@ function evaluateBinary(node: AstBinaryOp, state: State) {
     case BinaryOperation.Equals:
       return Math.abs(leftNumber - rightNumber) < DELTA_EQ ? TRUE : FALSE
     default:
-      assert(false, `cannot evaluate binary operation ${node.operation}`)
+      assertNever(node)
   }
 }
 

@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { State } from '../game/model'
+import { Direction, State } from '../game/model'
 
 export enum NodeType {
   NumberLiteral = 'NumberLiteral',
@@ -53,6 +53,6 @@ export function evaluateAst(node: AstNode, state: State): number {
   }
 }
 
-// export function evaluate(node: AstNode) {
-//   const number
+// export function evaluate(node: AstNode, state: State): Direction {
+//   const numberValue = evaluateAst(node, state)
 // }

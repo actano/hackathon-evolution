@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { createState, FieldContent, getField, State, stateToString } from '../../src/game'
+import { createState, Direction, FieldContent, getField, move, State, stateToString } from '../../src/game'
 
 describe('State', () => {
   it('should create initial board', () => {
@@ -33,5 +33,76 @@ describe('State', () => {
 [=]                        [=]
 [=][=][=][=][=][=][=][=][=][=]
 `)
+  })
+
+  context('move', () => {
+    context('without collision', () => {
+      it('should move down', () => {
+        const state: State = createState(10, 10, 5)
+        const newState = move(state, Direction.Down)
+
+        expect(stateToString(newState)).to.equal(`[=][=][=][=][=][=][=][=][=][=]
+[=]                        [=]
+[=]            [-]         [=]
+[=]            [-]         [=]
+[=]            [-]         [=]
+[=]            [-]         [=]
+[=]            [+]         [=]
+[=]                        [=]
+[=]                        [=]
+[=][=][=][=][=][=][=][=][=][=]
+`)
+
+      })
+      it('should move right', () => {
+        const state: State = createState(10, 10, 5)
+        const newState = move(state, Direction.Right)
+
+        expect(stateToString(newState)).to.equal(`[=][=][=][=][=][=][=][=][=][=]
+[=]                        [=]
+[=]            [-]         [=]
+[=]            [-]         [=]
+[=]            [-]         [=]
+[=]            [-][+]      [=]
+[=]                        [=]
+[=]                        [=]
+[=]                        [=]
+[=][=][=][=][=][=][=][=][=][=]
+`)
+      })
+      it('should move left', () => {
+        const state: State = createState(10, 10, 5)
+        const newState = move(state, Direction.Left)
+
+        expect(stateToString(newState)).to.equal(`[=][=][=][=][=][=][=][=][=][=]
+[=]                        [=]
+[=]            [-]         [=]
+[=]            [-]         [=]
+[=]            [-]         [=]
+[=]         [+][-]         [=]
+[=]                        [=]
+[=]                        [=]
+[=]                        [=]
+[=][=][=][=][=][=][=][=][=][=]
+`)
+      })
+      it('should move up', () => {
+        const state: State = createState(10, 10, 5)
+        const newState = move(state, Direction.Left)
+        const newState2 = move(newState, Direction.Up)
+
+        expect(stateToString(newState2)).to.equal(`[=][=][=][=][=][=][=][=][=][=]
+[=]                        [=]
+[=]                        [=]
+[=]            [-]         [=]
+[=]         [+][-]         [=]
+[=]         [-][-]         [=]
+[=]                        [=]
+[=]                        [=]
+[=]                        [=]
+[=][=][=][=][=][=][=][=][=][=]
+`)
+      })
+    })
   })
 })

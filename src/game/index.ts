@@ -1,5 +1,6 @@
 import assert from 'assert'
 import range from 'lodash/fp/range'
+import take from 'lodash/fp/take'
 
 enum FieldContent {
   Nothing = 'Nothing',
@@ -18,6 +19,7 @@ interface State {
   snake: Point[],
   sizeX: number,
   sizeY: number,
+  gameOver: boolean,
 }
 
 function createState(sizeX: number, sizeY: number, snakeLength: number): State {
@@ -26,6 +28,7 @@ function createState(sizeX: number, sizeY: number, snakeLength: number): State {
   const state: State = {
     sizeX,
     sizeY,
+    gameOver: false,
     snake: range(0, snakeLength).map(dY => ({ x: snakeHead.x, y: snakeHead.y - dY })),
     board: range(0, sizeY).map(y =>
       range(0, sizeX).map(x => {
@@ -112,12 +115,56 @@ function getField(state: State, x: number, y: number): FieldContent {
   return field
 }
 
+function isGameOver(state: State): boolean {
+  return state.gameOver
+}
+
+function getSnakeHead(state: State): Point {
+  assert(state.snake.length > 0)
+  return state.snake[0]
+}
+
+function move(state: State, direction: Direction): State {
+  const head = getSnakeHead(state)
+
+  let newSnakeHead: Point
+  switch (direction) {
+    case Direction.Down: {
+      newSnakeHead = { x: head.x, y: head.y + 1 }
+      break
+    }
+    case Direction.Up: {
+      newSnakeHead = { x: head.x, y: head.y - 1 }
+      break
+    }
+    case Direction.Right: {
+      newSnakeHead = { x: head.x + 1, y: head.y }
+      break
+    }
+    case Direction.Left: {
+      newSnakeHead = { x: head.x - 1, y: head.y }
+      break
+    }
+    default: {
+      assert(false, `Invalid direction ${direction}`)
+    }
+  }
+
+  return {
+     ...state,
+     snake: [newSnakeHead, ...take(state.snake.length-1, state.snake)]
+  }
+}
+
 export {
   State,
   FieldContent,
+  Direction,
   stateToString,
   fieldToString,
   createState,
   getField,
+  isGameOver,
+  move,
 }
 

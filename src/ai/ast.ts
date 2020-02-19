@@ -53,6 +53,18 @@ export function evaluateAst(node: AstNode, state: State): number {
   }
 }
 
-// export function evaluate(node: AstNode, state: State): Direction {
-//   const numberValue = evaluateAst(node, state)
-// }
+export function evaluate(node: AstNode, state: State): Direction {
+  const numberValue = evaluateAst(node, state)
+  const nonNegativeInteger = Math.abs(Math.round(numberValue))
+  switch (nonNegativeInteger % 4) {
+    case 0:
+      return Direction.Up
+    case 1:
+      return Direction.Right
+    case 2:
+      return Direction.Down
+    case 3:
+      return Direction.Left
+  }
+  assert(false, 'invalid direction')
+}

@@ -1,12 +1,14 @@
-import assert from 'assert'
 import {
   AstAi,
   AstBinaryOp,
   AstGetField,
+  AstGetFieldInFront,
+  AstGetX, AstGetY,
   AstIf,
   AstNode,
   AstNumberLiteral,
-  BinaryOperation, createAstAi,
+  BinaryOperation,
+  createAstAi,
   NodeType
 } from './ast'
 import { assertNever } from '../util'
@@ -28,6 +30,9 @@ function getRandomSubtree(rand: RandomNumberGenerator, ast: AstNode): AstNode {
 
   switch (ast.type) {
     case NodeType.NumberLiteral:
+    case NodeType.GetFieldInFront:
+    case NodeType.GetX:
+    case NodeType.GetY:
       return ast
     case NodeType.BinaryOp:
       return rand() < 0.5
@@ -62,6 +67,9 @@ function setRandomSubtree(rand: RandomNumberGenerator, target: AstNode, source: 
 
   switch (target.type) {
     case NodeType.NumberLiteral:
+    case NodeType.GetFieldInFront:
+    case NodeType.GetX:
+    case NodeType.GetY:
       return source
     case NodeType.BinaryOp:
       if (rand() < 0.5) {
@@ -177,11 +185,32 @@ function generateRandomGetField(rand: RandomNumberGenerator, depth: number): Ast
   }
 }
 
+function generateRandomGetFieldInFront(rand: RandomNumberGenerator): AstGetFieldInFront {
+  return {
+    type: NodeType.GetFieldInFront,
+  }
+}
+
+function generateRandomGetX(rand: RandomNumberGenerator): AstGetX {
+  return {
+    type: NodeType.GetX,
+  }
+}
+
+function generateRandomGetY(rand: RandomNumberGenerator): AstGetY {
+  return {
+    type: NodeType.GetY,
+  }
+}
+
 const AST_GENERATORS: AstGenerator[] = [
   generateRandomNumberLiteral,
   generateRandomBinaryOp,
   generateRandomIf,
   generateRandomGetField,
+  generateRandomGetFieldInFront,
+  generateRandomGetX,
+  generateRandomGetY,
 ]
 
 export function generateRandomAst(rand: RandomNumberGenerator, depth: number): AstNode {

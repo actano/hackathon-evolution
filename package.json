@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "start": "babel-node --extensions .js,.ts src/index.ts",
-    "test": "mocha --opts test/mocha.opts  'test/**/*.unit.*'"
+    "test": "mocha --opts test/mocha.opts  'test/**/*.unit.*'",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@types/mocha": "^5.2.7",

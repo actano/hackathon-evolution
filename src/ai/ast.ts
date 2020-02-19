@@ -13,6 +13,9 @@ export enum NodeType {
   BinaryOp = 'BinaryOp',
   GetField = 'GetField',
   If = 'If',
+  GetFieldInFront = 'GetFieldInFront',
+  GetX = 'GetX',
+  GetY = 'GetY',
 }
 
 export enum BinaryOperation {
@@ -85,7 +88,24 @@ export function astIf(condition: AstNode, then: AstNode, els: AstNode): AstIf {
   }
 }
 
-export type AstNode = AstNumberLiteral | AstBinaryOp | AstGetField | AstIf
+export interface AstGetFieldInFront {
+  type: NodeType.GetFieldInFront,
+}
+
+export interface AstGetX {
+  type: NodeType.GetX,
+}
+
+export interface AstGetY {
+  type: NodeType.GetY,
+}
+
+export type AstNode = AstNumberLiteral | AstBinaryOp | AstGetField | AstIf | AstGetFieldInFront |
+  AstGetX | AstGetY
+
+function deltaEq(a: number, b: number): boolean {
+  return Math.abs(a - b) < DELTA_EQ
+}
 
 function evaluateBinary(node: AstBinaryOp, state: State) {
   const leftNumber = evaluateAst(node.lvalue, state)
@@ -99,9 +119,22 @@ function evaluateBinary(node: AstBinaryOp, state: State) {
       return leftNumber * rightNumber
     }
     case BinaryOperation.Equals:
-      return Math.abs(leftNumber - rightNumber) < DELTA_EQ ? TRUE : FALSE
+      return deltaEq(leftNumber, rightNumber) ? TRUE : FALSE
+    case BinaryOperation.And:
+      return (deltaEq(leftNumber, TRUE) && deltaEq(rightNumber, TRUE)) ? TRUE : FALSE
+    case BinaryOperation.Or:
+      return (deltaEq(leftNumber, TRUE) || deltaEq(rightNumber, TRUE)) ? TRUE : FALSE
+    case BinaryOperation.Less:
+      return (leftNumber < rightNumber) ? TRUE : FALSE
+    case BinaryOperation.LessEq:
+      return ((leftNumber < rightNumber) || deltaEq(leftNumber, rightNumber)) ? TRUE: FALSE
+
+    case BinaryOperation.Greater:
+      return leftNumber > rightNumber ? TRUE : FALSE
+    case BinaryOperation.GreaterEq:
+      return ((leftNumber > rightNumber) || deltaEq(leftNumber, rightNumber)) ? TRUE : FALSE
     default:
-      assertNever(node)
+      assertNever(node.operation)
   }
 }
 
@@ -131,6 +164,36 @@ function evaluateIf(node : AstIf, state : State): number {
   }
 }
 
+function evaluateGetFieldInFront(state : State): number {
+  assert(state.snake.length >= 2)
+  const headPosition = state.snake[0]
+  const previousHeadPosition = state.snake[1]
+
+  if (headPosition.x < previousHeadPosition.x) {
+    return fieldToNumber(getField(state, headPosition.x - 1, headPosition.y))
+  } else if (headPosition.x > previousHeadPosition.x) {
+    return fieldToNumber(getField(state, headPosition.x + 1, headPosition.y))
+  }
+
+  if (headPosition.y < previousHeadPosition.y) {
+    return fieldToNumber(getField(state, headPosition.x, headPosition.y - 1))
+  } else if (headPosition.y > previousHeadPosition.y) {
+    return fieldToNumber(getField(state, headPosition.x, headPosition.y + 1))
+  }
+
+  assert(false, 'invalid snake state')
+}
+
+function evaluateGetX(state : State): number {
+  assert(state.snake.length > 0)
+  return state.snake[0].x
+}
+
+function evaluateGetY(state : State): number {
+  assert(state.snake.length > 0)
+  return state.snake[0].y
+}
+
 export function evaluateAst(node: AstNode, state: State): number {
   switch (node.type) {
     case NodeType.NumberLiteral:
@@ -141,8 +204,14 @@ export function evaluateAst(node: AstNode, state: State): number {
       return evaluateGetField(node, state)
     case NodeType.If:
       return evaluateIf(node, state)
+    case NodeType.GetFieldInFront:
+      return evaluateGetFieldInFront(state)
+    case NodeType.GetX:
+      return evaluateGetX(state)
+    case NodeType.GetY:
+      return evaluateGetY(state)
     default:
-      assert(false, `cannot evaluate Ast Node ${node}`)
+      assertNever(node)
   }
 }
 

@@ -1,6 +1,10 @@
 import assert from 'assert'
 import { Direction, FieldContent, getField, getFieldP, State } from '../game/model'
 
+export const FALSE = 0
+export const TRUE = 1
+const DELTA_EQ = 0.1
+
 export enum NodeType {
   NumberLiteral = 'NumberLiteral',
   BinaryOp = 'BinaryOp',
@@ -11,6 +15,7 @@ export enum NodeType {
 export enum BinaryOperation {
   Plus = '+',
   Multiply = '*',
+  Equals = '=='
 }
 
 export interface AstNumberLiteral {
@@ -51,6 +56,8 @@ function evaluateBinary(node: AstBinaryOp, state: State) {
     case BinaryOperation.Multiply: {
       return leftNumber * rightNumber
     }
+    case BinaryOperation.Equals:
+      return Math.abs(leftNumber - rightNumber) < DELTA_EQ ? TRUE : FALSE
     default:
       assert(false, `cannot evaluate binary operation ${node.operation}`)
   }
@@ -72,7 +79,6 @@ function evaluateGetField(node : AstGetField, state : State): number {
   return fieldToNumber(field)
 }
 
-const FALSE = 0
 function evaluateIf(node : AstIf, state : State): number {
   const conditionValue = evaluateAst(node.condition, state)
 

@@ -1,6 +1,14 @@
 import { expect } from 'chai'
 
-import { AstNode, BinaryOperation, evaluate, evaluateAst, NodeType } from '../../src/ai/ast'
+import {
+  AstNode,
+  BinaryOperation,
+  evaluate,
+  evaluateAst,
+  FALSE,
+  NodeType,
+  TRUE
+} from '../../src/ai/ast'
 import { createState, Direction, State } from '../../src/game/model'
 
 describe('AST', () => {
@@ -128,5 +136,47 @@ describe('AST', () => {
     const result: number = evaluateAst(tree, state)
 
     expect(result).to.equal(24)
+  })
+
+  it('should evaluate true equals expression', () => {
+    const tree: AstNode =  {
+      type: NodeType.BinaryOp,
+      operation: BinaryOperation.Equals,
+      lvalue: {
+        type: NodeType.NumberLiteral,
+        value: 42.1,
+      },
+      rvalue: {
+        type: NodeType.NumberLiteral,
+        value: 42.1234,
+      }
+    }
+
+    const state: State = createState(10, 10, 3)
+
+    const result: number = evaluateAst(tree, state)
+
+    expect(result).to.equal(TRUE)
+  })
+
+  it('should evaluate false equals expression', () => {
+    const tree: AstNode =  {
+      type: NodeType.BinaryOp,
+      operation: BinaryOperation.Equals,
+      lvalue: {
+        type: NodeType.NumberLiteral,
+        value: 42.1,
+      },
+      rvalue: {
+        type: NodeType.NumberLiteral,
+        value: -10,
+      }
+    }
+
+    const state: State = createState(10, 10, 3)
+
+    const result: number = evaluateAst(tree, state)
+
+    expect(result).to.equal(FALSE)
   })
 })

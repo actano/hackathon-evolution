@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { createState, Direction, FieldContent, getField, move, State, stateToString } from '../../src/game'
+import { createState, Direction, FieldContent, getField, isGameOver, move, State, stateToString } from '../../src/game'
 
 describe('State', () => {
   it('should create initial board', () => {
@@ -41,6 +41,7 @@ describe('State', () => {
         const state: State = createState(10, 10, 5)
         const newState = move(state, Direction.Down)
 
+        expect(isGameOver(newState)).to.equal(false)
         expect(stateToString(newState)).to.equal(`[=][=][=][=][=][=][=][=][=][=]
 [=]                        [=]
 [=]            [-]         [=]
@@ -58,6 +59,7 @@ describe('State', () => {
         const state: State = createState(10, 10, 5)
         const newState = move(state, Direction.Right)
 
+        expect(isGameOver(newState)).to.equal(false)
         expect(stateToString(newState)).to.equal(`[=][=][=][=][=][=][=][=][=][=]
 [=]                        [=]
 [=]            [-]         [=]
@@ -74,6 +76,7 @@ describe('State', () => {
         const state: State = createState(10, 10, 5)
         const newState = move(state, Direction.Left)
 
+        expect(isGameOver(newState)).to.equal(false)
         expect(stateToString(newState)).to.equal(`[=][=][=][=][=][=][=][=][=][=]
 [=]                        [=]
 [=]            [-]         [=]
@@ -91,6 +94,7 @@ describe('State', () => {
         const newState = move(state, Direction.Left)
         const newState2 = move(newState, Direction.Up)
 
+        expect(isGameOver(newState)).to.equal(false)
         expect(stateToString(newState2)).to.equal(`[=][=][=][=][=][=][=][=][=][=]
 [=]                        [=]
 [=]                        [=]
@@ -102,6 +106,14 @@ describe('State', () => {
 [=]                        [=]
 [=][=][=][=][=][=][=][=][=][=]
 `)
+      })
+    })
+    context('with collision', () => {
+      it('should fail when moving up', () => {
+        const state: State = createState(10, 10, 5)
+        const newState = move(state, Direction.Up)
+
+        expect(isGameOver(newState)).to.equal(true)
       })
     })
   })

@@ -88,6 +88,10 @@ function pointEquals(p1: Point, p2: Point): boolean {
   return (p1.x === p2.x) && (p1.y === p2.y)
 }
 
+function getFieldP(state: State, p: Point): FieldContent {
+  return getField(state, p.x, p.y)
+}
+
 function getField(state: State, x: number, y: number): FieldContent {
   assert(y >= 0)
   assert(y < state.sizeY)
@@ -147,6 +151,15 @@ function move(state: State, direction: Direction): State {
     }
     default: {
       assert(false, `Invalid direction ${direction}`)
+    }
+  }
+
+  const contentNewHead = getFieldP(state, newSnakeHead)
+
+  if (contentNewHead != FieldContent.Nothing) {
+    return {
+      ...state,
+      gameOver: true,
     }
   }
 

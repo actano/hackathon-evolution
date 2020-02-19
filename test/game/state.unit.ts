@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { createState, Direction, FieldContent, getField, isGameOver, move, State, stateToString } from '../../src/game'
+import { createState, Direction, FieldContent, getField, isGameOver, move, State, stateToString } from '../../src/game/model'
 
 describe('State', () => {
   it('should create initial board', () => {

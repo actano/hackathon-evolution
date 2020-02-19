@@ -5,6 +5,7 @@ export enum NodeType {
   NumberLiteral = 'NumberLiteral',
   BinaryOp = 'BinaryOp',
   GetField = 'GetField',
+  If = 'If',
 }
 
 export enum BinaryOperation {
@@ -30,8 +31,14 @@ export interface AstGetField {
   y: AstNode,
 }
 
-export type AstNode = AstNumberLiteral | AstBinaryOp | AstGetField
+export interface AstIf {
+  type: NodeType.If,
+  condition: AstNode,
+  then: AstNode,
+  else: AstNode,
+}
 
+export type AstNode = AstNumberLiteral | AstBinaryOp | AstGetField | AstIf
 
 function evaluateBinary(node: AstBinaryOp, state: State) {
   const leftNumber = evaluateAst(node.lvalue, state)
@@ -65,6 +72,17 @@ function evaluateGetField(node : AstGetField, state : State): number {
   return fieldToNumber(field)
 }
 
+const FALSE = 0
+function evaluateIf(node : AstIf, state : State): number {
+  const conditionValue = evaluateAst(node.condition, state)
+
+  if (conditionValue !== FALSE) {
+    return evaluateAst(node.then, state)
+  } else {
+    return evaluateAst(node.else, state)
+  }
+}
+
 export function evaluateAst(node: AstNode, state: State): number {
   switch (node.type) {
     case NodeType.NumberLiteral:
@@ -73,6 +91,8 @@ export function evaluateAst(node: AstNode, state: State): number {
       return evaluateBinary(node, state)
     case NodeType.GetField:
       return evaluateGetField(node, state)
+    case NodeType.If:
+      return evaluateIf(node, state)
     default:
       assert(false, `cannot evaluate Ast Node ${node}`)
   }

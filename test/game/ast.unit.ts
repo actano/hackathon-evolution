@@ -81,4 +81,52 @@ describe('AST', () => {
 
     expect(result).to.equal(3)
   })
+
+  it('should evaluate if expression with true condition', () => {
+    const tree: AstNode =  {
+      type: NodeType.If,
+      condition: {
+        type: NodeType.NumberLiteral,
+        value: 1234,
+      },
+      then: {
+        type: NodeType.NumberLiteral,
+        value: 42,
+      },
+      else: {
+        type: NodeType.NumberLiteral,
+        value: 24,
+      },
+    }
+
+    const state: State = createState(10, 10, 3)
+
+    const result: number = evaluateAst(tree, state)
+
+    expect(result).to.equal(42)
+  })
+
+  it('should evaluate if expression with false condition', () => {
+    const tree: AstNode =  {
+      type: NodeType.If,
+      condition: {
+        type: NodeType.NumberLiteral,
+        value: 0,
+      },
+      then: {
+        type: NodeType.NumberLiteral,
+        value: 42,
+      },
+      else: {
+        type: NodeType.NumberLiteral,
+        value: 24,
+      },
+    }
+
+    const state: State = createState(10, 10, 3)
+
+    const result: number = evaluateAst(tree, state)
+
+    expect(result).to.equal(24)
+  })
 })

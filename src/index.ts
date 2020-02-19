@@ -13,6 +13,7 @@ const result = simulatePopulation(
   roundEvaluation,
   fittestSelection,
   createEvolver(Math.random),
+  0.15,
 )
 
 console.log(JSON.stringify(fittestSelection(result, 1)[0], null, 2))

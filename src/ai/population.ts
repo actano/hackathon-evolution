@@ -53,6 +53,7 @@ export function simulatePopulation(
   evaluationFunction: EvaluationFunction,
   selectionFunction: SelectionFunction,
   evolver: Evolver,
+  mutationRate: number,
 ): EvaluatedPopulation {
   const initialPopulation: Population = range(0, populationSize).map(() => createRandomAstAi(rand))
 
@@ -67,7 +68,13 @@ export function simulatePopulation(
     const [a, b] = selectionFunction(currentPopulation, 2)
 
     const childPopulation : Population = range(0, populationSize).map(
-      () => evolver.mutate(evolver.recombine(a.ai, b.ai)),
+      () => {
+        const child = evolver.recombine(a.ai, b.ai)
+        if (rand() < mutationRate) {
+          return evolver.mutate(child)
+        }
+        return child
+      },
     )
 
     const evaluatedChildPopulation = evaluatePopulation(

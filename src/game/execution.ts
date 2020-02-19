@@ -40,9 +40,17 @@ function run(initialState: State, ai: Ai, maxRounds: number): RunResult {
   }
 }
 
+type Quality = number
+type EvaluationFunction = (result: RunResult) => Quality
+
+const roundEvaluation: EvaluationFunction = (result: RunResult) => result.round
+
 export {
-  run,
   Ai,
   RunResult,
+  Quality,
+  EvaluationFunction,
+  run,
   makeDirectionAi,
+  roundEvaluation,
 }

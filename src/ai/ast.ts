@@ -1,5 +1,6 @@
 import assert from 'assert'
 import { Direction, FieldContent, getField, getFieldP, State } from '../game/model'
+import { Ai } from '../game/execution'
 
 export const FALSE = 0
 export const TRUE = 1
@@ -23,11 +24,27 @@ export interface AstNumberLiteral {
   value: number,
 }
 
+export function astNum(value: number): AstNumberLiteral {
+  return {
+    type: NodeType.NumberLiteral,
+    value,
+  }
+}
+
 export interface AstBinaryOp {
   type: NodeType.BinaryOp,
   lvalue: AstNode,
   rvalue: AstNode,
   operation: BinaryOperation,
+}
+
+export function astBinOp(operation: BinaryOperation, lvalue: AstNode, rvalue: AstNode): AstBinaryOp {
+  return {
+    type: NodeType.BinaryOp,
+    operation,
+    lvalue,
+    rvalue,
+  }
 }
 
 export interface AstGetField {
@@ -36,11 +53,28 @@ export interface AstGetField {
   y: AstNode,
 }
 
+export function astGetField(x: AstNode, y: AstNode): AstGetField {
+  return {
+    type: NodeType.GetField,
+    x,
+    y,
+  }
+}
+
 export interface AstIf {
   type: NodeType.If,
   condition: AstNode,
   then: AstNode,
   else: AstNode,
+}
+
+export function astIf(condition: AstNode, then: AstNode, els: AstNode): AstIf {
+  return {
+    type: NodeType.If,
+    condition,
+    then,
+    else: els,
+  }
 }
 
 export type AstNode = AstNumberLiteral | AstBinaryOp | AstGetField | AstIf
@@ -117,4 +151,17 @@ export function evaluate(node: AstNode, state: State): Direction {
       return Direction.Left
   }
   assert(false, 'invalid direction')
+}
+
+export interface AstAi extends Ai {
+  ast: AstNode
+}
+
+export function createAstAi(ast: AstNode): AstAi {
+  return {
+    step(state : State) : Direction {
+      return evaluate(ast, state)
+    },
+    ast,
+  }
 }

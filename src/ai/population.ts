@@ -17,7 +17,7 @@ type EvaluatedPopulation = EvaluatedIndividual[]
 
 type ParentSelectionFunction = (evaluatedPopulation: EvaluatedPopulation, rand: RandomNumberGenerator, count: number) => EvaluatedPopulation
 
-const MAX_ROUNDS = 100
+export const MAX_ROUNDS = 100
 
 function evaluateIndividual(evaluationFunction: EvaluationFunction, ai : AstAi, initialState: State): Quality {
   const runResult = run(initialState, ai, MAX_ROUNDS)

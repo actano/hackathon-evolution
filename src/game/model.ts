@@ -74,10 +74,9 @@ function stateToString(state: State): string {
 }
 
 enum Direction {
-  Up = 'Up',
-  Right = 'Right',
-  Down = 'Down',
-  Left = 'Left'
+  TurnRight = 'TurnRight',
+  TurnLeft = 'TurnLeft',
+  Straight = 'Straight',
 }
 
 
@@ -128,22 +127,25 @@ function getSnakeHead(state: State): Point {
 function move(state: State, direction: Direction): State {
   const head = getSnakeHead(state)
 
+  assert(state.snake.length >= 2)
+  const beforeHead = state.snake[1]
+  const headDirection = {
+    x: head.x - beforeHead.x,
+    y: head.y - beforeHead.y,
+  }
+
   let newSnakeHead: Point
   switch (direction) {
-    case Direction.Down: {
-      newSnakeHead = { x: head.x, y: head.y + 1 }
+    case Direction.Straight: {
+      newSnakeHead = { x: head.x + headDirection.x, y: head.y + headDirection.y }
       break
     }
-    case Direction.Up: {
-      newSnakeHead = { x: head.x, y: head.y - 1 }
+    case Direction.TurnRight: {
+      newSnakeHead = { x: head.x - headDirection.y, y: head.y + headDirection.x }
       break
     }
-    case Direction.Right: {
-      newSnakeHead = { x: head.x + 1, y: head.y }
-      break
-    }
-    case Direction.Left: {
-      newSnakeHead = { x: head.x - 1, y: head.y }
+    case Direction.TurnLeft: {
+      newSnakeHead = { x: head.x + headDirection.y, y: head.y - headDirection.x }
       break
     }
     default: {

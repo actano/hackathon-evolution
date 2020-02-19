@@ -223,15 +223,13 @@ export function evaluateAst(node: AstNode, state: State): number {
 
 export function evaluate(node: AstNode, state: State): Direction {
   const numberValue = evaluateAst(node, state)
-  switch (normalizeNumber(numberValue, 4)) {
-    case 0:
-      return Direction.Up
-    case 1:
-      return Direction.Right
+  switch (normalizeNumber(numberValue, 3)) {
     case 2:
-      return Direction.Down
-    case 3:
-      return Direction.Left
+      return Direction.Straight
+    case 1:
+      return Direction.TurnRight
+    case 0:
+      return Direction.TurnLeft
   }
   assert(false, 'invalid direction')
 }

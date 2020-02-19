@@ -1,18 +1,18 @@
 import { createState, stateToString } from './game/model'
 import {
   createTournamentParentSelection,
-  fittestSelection,
+  fittestSelection, MAX_ROUNDS,
   simulatePopulation,
 } from './ai/population'
-import { roundEvaluation } from './game/execution'
+import { roundEvaluation, runPrint } from './game/execution'
 import { createEvolver } from './ai/evolve'
 
-const initialState = createState(100, 100, 5)
+const initialState = createState(10, 10, 5)
 
 const result = simulatePopulation(
   Math.random,
   initialState,
-  1000,
+  10,
   1000,
   roundEvaluation,
   createTournamentParentSelection(4),
@@ -20,4 +20,9 @@ const result = simulatePopulation(
   0.15,
 )
 
-console.log(JSON.stringify(fittestSelection(result, 1)[0], null, 2))
+
+const best = fittestSelection(result, 1)[0]
+
+runPrint(initialState, best.ai, MAX_ROUNDS)
+
+console.log(JSON.stringify(best, null, 2))

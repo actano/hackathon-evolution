@@ -1,6 +1,6 @@
 import range from 'lodash/fp/range'
 
-import { Direction, isGameOver, move, State } from './model'
+import { Direction, isGameOver, move, State, stateToString } from './model'
 
 interface Ai {
   step(state: State): Direction,
@@ -33,6 +33,31 @@ function run(initialState: State, ai: Ai, maxRounds: number): RunResult {
       }
     }
   }
+
+  return {
+    round: maxRounds,
+    endState: currentState
+  }
+}
+
+export function runPrint(initialState: State, ai: Ai, maxRounds: number): RunResult {
+  let currentState: State = initialState
+
+  for (const round of range(0, maxRounds)) {
+    const direction = ai.step(currentState)
+    currentState = move(currentState, direction)
+
+    console.log(stateToString(currentState))
+
+    if (isGameOver(currentState)) {
+      return {
+        round: round,
+        endState: currentState,
+      }
+    }
+  }
+
+  console.log(stateToString(currentState))
 
   return {
     round: maxRounds,

@@ -74,10 +74,10 @@ function stateToString(state: State): string {
 }
 
 enum Direction {
-  Up,
-  Right,
-  Down,
-  Left
+  Up = 'Up',
+  Right = 'Right',
+  Down = 'Down',
+  Left = 'Left'
 }
 
 
@@ -174,6 +174,7 @@ export {
   fieldToString,
   createState,
   getField,
+  getFieldP,
   isGameOver,
   move,
 }

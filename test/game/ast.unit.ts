@@ -61,4 +61,24 @@ describe('AST', () => {
 
     expect(result).to.equal(Direction.Down)
   })
+
+  it('should evaluate field access', () => {
+    const tree: AstNode =  {
+      type: NodeType.GetField,
+      x: {
+        type: NodeType.NumberLiteral,
+        value: 5,
+      },
+      y: {
+        type: NodeType.NumberLiteral,
+        value: 5,
+      },
+    }
+
+    const state: State = createState(10, 10, 3)
+
+    const result: number = evaluateAst(tree, state)
+
+    expect(result).to.equal(3)
+  })
 })

@@ -1,9 +1,10 @@
 import assert from 'assert'
-import { Direction, State } from '../game/model'
+import { Direction, FieldContent, getField, getFieldP, State } from '../game/model'
 
 export enum NodeType {
   NumberLiteral = 'NumberLiteral',
   BinaryOp = 'BinaryOp',
+  GetField = 'GetField',
 }
 
 export enum BinaryOperation {
@@ -23,7 +24,13 @@ export interface AstBinaryOp {
   operation: BinaryOperation,
 }
 
-export type AstNode = AstNumberLiteral | AstBinaryOp
+export interface AstGetField {
+  type: NodeType.GetField,
+  x: AstNode,
+  y: AstNode,
+}
+
+export type AstNode = AstNumberLiteral | AstBinaryOp | AstGetField
 
 
 function evaluateBinary(node: AstBinaryOp, state: State) {
@@ -42,12 +49,30 @@ function evaluateBinary(node: AstBinaryOp, state: State) {
   }
 }
 
+function normalizeNumber(n: number, max: number): number {
+  return Math.abs(Math.round(n)) % max
+}
+
+function fieldToNumber(field: FieldContent): number {
+  const values = Object.keys(FieldContent).map(key => FieldContent[key])
+  return values.indexOf(field)
+}
+
+function evaluateGetField(node : AstGetField, state : State): number {
+  const x = normalizeNumber(evaluateAst(node.x, state), state.sizeX)
+  const y = normalizeNumber(evaluateAst(node.y, state), state.sizeY)
+  const field = getField(state, x, y)
+  return fieldToNumber(field)
+}
+
 export function evaluateAst(node: AstNode, state: State): number {
   switch (node.type) {
     case NodeType.NumberLiteral:
       return node.value
     case NodeType.BinaryOp:
       return evaluateBinary(node, state)
+    case NodeType.GetField:
+      return evaluateGetField(node, state)
     default:
       assert(false, `cannot evaluate Ast Node ${node}`)
   }
@@ -55,8 +80,7 @@ export function evaluateAst(node: AstNode, state: State): number {
 
 export function evaluate(node: AstNode, state: State): Direction {
   const numberValue = evaluateAst(node, state)
-  const nonNegativeInteger = Math.abs(Math.round(numberValue))
-  switch (nonNegativeInteger % 4) {
+  switch (normalizeNumber(numberValue, 4)) {
     case 0:
       return Direction.Up
     case 1:
